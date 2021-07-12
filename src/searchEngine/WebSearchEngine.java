@@ -3,7 +3,8 @@ package searchEngine;
 import java.io.File;
 import java.io.IOException;
 
-public class WebSearchEngine {
+public class
+qwWebSearchEngine {
 
 	public static void main(String[] args) throws IOException {
 		File file = new File("downloadedPages//");
@@ -17,7 +18,7 @@ public class WebSearchEngine {
 			htmltext.start();
 			System.out.println("Done.");
 		}
-		
-		
+		Searcher srch = new Searcher();
+		srch.start();
 	}
 }
