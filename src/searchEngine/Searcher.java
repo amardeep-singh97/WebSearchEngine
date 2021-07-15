@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.InputMismatchException;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -65,6 +66,7 @@ public class Searcher <E> {
 				idx.add(new Tuple(fileno, pos));
 			}
 		}
+		reader.close();
 //		System.out.println("indexed " + file.getPath() + " " + pos + " words");
 	}
 	   public static HashMap<Integer, Integer> sortByValue(HashMap<Integer, Integer> hm) 
@@ -90,7 +92,7 @@ public class Searcher <E> {
 	        return temp; 
 	        
 	    } 
-	public Set search(List<String> words) {
+	public Set<String> search(List<String> words) {
 		int count=0;
 		Set<String> answer = new HashSet<String>();
 		int prev=0;
@@ -156,15 +158,23 @@ public class Searcher <E> {
 					System.out.print(last.substring(0,last.length()-4)+"\n" );
 	    	}
 	    	System.out.println("Type 1 to search for another word or Type 0 to exit");
-	    	check = s.nextInt();
-	    	if (check == 0) {
-	    		break;
+	    	try {
+	    		check = s.nextInt();
+	    		if (check == 0) {
+	    			break;
+	    		}
+	    		else if(check!=0 && check!=1) {
+	    			throw new InputMismatchException("Wrong Input");
+	    		}
+	    		else {
+	    			str = s.nextLine();
+	    		}
 	    	}
-	    	else {
-	    		str = s.nextLine();	
+	    	catch(Exception e) {
+	    		System.out.println("Wrong Input Try again");
 	    	}
-	    	
 	    }
+    	s.close();
 	}
 	
 	private class Tuple {
