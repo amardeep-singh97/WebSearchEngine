@@ -140,7 +140,7 @@ public class Searcher <E> {
 	    Scanner s = new Scanner(System.in);
 
 		
-	    for (int i = 0; i < 50; i++) {
+	    for (int i = 0; i < List_Of_Files.length; i++) {
 			srch.indexFile(List_Of_Files[i]);
 	    }
 	    int check =1;
