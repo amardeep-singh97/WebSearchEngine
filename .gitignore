@@ -1,2 +1,5 @@
-ConvertedText
-downloadedPages
+ConvertedText/*
+downloadedPages/*
+
+!ConvertedText/.gitkeep
+!downloadedPages/.gitkeep 
