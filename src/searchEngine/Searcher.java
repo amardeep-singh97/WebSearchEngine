@@ -18,6 +18,8 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
+import searchEngine.Searcher.Tuple;
+
 //import searchEngine.Indexer.Tuple;
 
 //import searchEngine.Indexer.Tuple;
@@ -51,8 +53,7 @@ public class Searcher <E> {
  
 		int pos = 0;
 		BufferedReader reader = new BufferedReader(new FileReader(file));
-		for (String line = reader.readLine(); line != null; line = reader
-				.readLine()) {
+		for (String line = reader.readLine(); line != null; line = reader.readLine()) {
 			for (String _word : line.split("\\W+")) {
 				String word = _word.toLowerCase();
 				pos++;
@@ -103,6 +104,7 @@ public class Searcher <E> {
 			a[j]=0;
 			b[j]=0;
 		}
+
 		for (String _word : words) {
 			String word = _word.toLowerCase();
 			List<Tuple> idx = index.get(word);
@@ -126,13 +128,10 @@ public class Searcher <E> {
 			}
 	
 			System.out.println("");
-			
 		}
 
 		return answer;
 	}
-
-	
 	
 	public static void start() throws IOException {
 		Searcher<?> srch = new Searcher();
@@ -141,7 +140,6 @@ public class Searcher <E> {
 	    File[] List_Of_Files = wholeFolder.listFiles();
 	    Scanner s = new Scanner(System.in);
 
-		
 	    for (int i = 0; i < List_Of_Files.length; i++) {
 			srch.indexFile(List_Of_Files[i]);
 	    }
@@ -150,34 +148,46 @@ public class Searcher <E> {
 	    	System.out.println("Enter the word you want to search");
 	    	String str = s.nextLine();
 	    
-
 	    	String[] al = str.split(" ");
 	    	Set<String> answer = new HashSet<String>();
-	    	answer = srch.search(Arrays.asList(al));
-	    	for (String last : answer) {
-					System.out.print(last.substring(0,last.length()-4)+"\n" );
+	    	answer = srch.search(Arrays.asList(al));	    	
+	    	if(answer.size() > 0)
+	    	{
+	    		for (String last : answer) {
+					System.out.print(last.substring(0,last.length())+"\n" );
+	    		}
 	    	}
-	    	System.out.println("Type 1 to search for another word or Type 0 to exit");
+	    	else
+	    		System.out.println("Results not Found for : " + str);
+
 	    	try {
-	    		check = s.nextInt();
-	    		if (check == 0) {
-	    			break;
-	    		}
-	    		else if(check!=0 && check!=1) {
-	    			throw new InputMismatchException("Wrong Input");
-	    		}
-	    		else {
-	    			str = s.nextLine();
-	    		}
+				AutoSuggestion.startSuggestion(str);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	    	
+	    	
+	    	System.out.println("\nType 1 to search for another word or Type 0 to exit");
+	    	
+	    	while(!s.hasNextInt())
+	    	{
+	    		System.out.println("Try again!! Type 1 to search for another word or Type 0 to exit");
+	    		s.next();
+	    	}	    	
+	    	check = s.nextInt();
+	    	if (check == 0) {
+	    		System.out.println("Hope to see you soon. Good Bye!!");
+	    		break;
 	    	}
-	    	catch(Exception e) {
-	    		System.out.println("Wrong Input Try again");
+	       	else {
+	    		str = s.nextLine();	
 	    	}
 	    }
     	s.close();
 	}
 	
-	private class Tuple {
+	public class Tuple {
 		private int fileno;
 		private int position;
  
