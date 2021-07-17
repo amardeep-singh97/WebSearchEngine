@@ -26,7 +26,7 @@ public class HTMLToText {
 		String name = doc.title().replace('/', '-');
 		try {
 			FileWriter textfile = new FileWriter("ConvertedText\\"+name+".txt"); //Creating new text file.
-			textfile.write(doc.toString()); //writing the file with document i parsed using jsoup
+			textfile.write(doc.body().text().toLowerCase()); //writing the file with document i parsed using jsoup
 			textfile.close(); 
 		}catch(Exception e){
 			System.out.println("Error Occured while parsing the text file"+ name); 

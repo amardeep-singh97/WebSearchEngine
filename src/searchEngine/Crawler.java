@@ -34,7 +34,8 @@ public class Crawler {
 	private boolean filterURL(String link) {
 		if(link.contains(".svg") || link.contains("#") || link.contains(".png") ||
 				link.contains(".jpeg") || link.contains(".pdf") || link.contains(".gif")||
-				link.contains(".jpg") || link.contains(".swf"))
+				link.contains(".jpg") || link.contains(".swf") || link.contains("?")||
+				link.contains("mailto:") || link.contains("javascript:"))
 			return false;
 		return true;
 	}

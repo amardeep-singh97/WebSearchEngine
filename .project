@@ -3,6 +3,7 @@
 	<name>WebSearchEngine</name>
 	<comment></comment>
 	<projects>
+		<project>Text Processing</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
