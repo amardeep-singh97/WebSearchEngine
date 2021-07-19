@@ -32,8 +32,12 @@ public class AutoSuggestion {
 			  StringTokenizer strTokenizer = new StringTokenizer(strFileText); 
 			  while (strTokenizer.hasMoreTokens()) 
 			  {  
-				  String strToken = strTokenizer.nextToken();
-				  listStrings.add(strToken);
+				  String strToken = strTokenizer.nextToken().replaceAll("[|;:.,='<>()%#@*^/&\"]", " ");
+				  int ind = strToken.indexOf(" ");
+				  if(ind != -1 && strToken.substring(0, ind).length()>0)
+					  listStrings.add(strToken.substring(0, ind));
+				  else
+					  listStrings.add(strToken);
 			  }
 		  }
 	  }
