@@ -9,8 +9,8 @@ public class WebSearchEngine {
 		File[] files = file.listFiles();
 		if(files.length <= 1) {
 			System.out.println("Crawling Started... Saving web pages");
-			Crawler cr = new Crawler();
-			cr.start();
+//			Crawler cr = new Crawler();
+//			cr.start();
 		}
 		Searcher.start();
 	}
