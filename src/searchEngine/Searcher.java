@@ -22,39 +22,39 @@ import java.util.Set;
 //import searchEngine.Indexer.Tuple;
 
 //import searchEngine.Indexer.Tuple;
-class spellCheck{
-	public void check(String word){
-		try{
-		ArrayList<String> arr = new ArrayList<String>();
-		int i=0;
-		int d=0;;
-		BufferedReader br =  new BufferedReader(new FileReader("src\\Dictionary.txt"));
-		String line = br.readLine();
-		while (line != null) {
-			arr.add(line);
-			line = br.readLine();
-		}
+//class spellCheck{
+//	public void check(String word){
+//		try{
+//		ArrayList<String> arr = new ArrayList<String>();
+//		int i=0;
+//		int d=0;;
+//		BufferedReader br =  new BufferedReader(new FileReader("src\\Dictionary.txt"));
+//		String line = br.readLine();
+//		while (line != null) {
+//			arr.add(line);
+//			line = br.readLine();
+//		}
+//
+//		if (arr.contains(word)) {
+//
+//		}
+//		else {
+//			for (i=0;i<arr.size();i++) {
+//				d= Sequences.editDistance(word, arr.get(i));
+////					System.out.println(d);
+//				if(d==1) {
+//					System.out.println("Did you mean \""+arr.get(i)+"\"?");
+//				}
+//			}
+//		}
+//	}
+//		catch (Exception e) {
+//		System.out.println(e);
+//	}
+//
+//}
 
-		if (arr.contains(word)) {
-
-		}
-		else {
-			for (i=0;i<arr.size();i++) {
-				d= Sequences.editDistance(word, arr.get(i));
-//					System.out.println(d);
-				if(d==1) {
-					System.out.println("Did you mean \""+arr.get(i)+"\"?");
-				}
-			}
-		}
-	}
-		catch (Exception e) {
-		System.out.println(e);
-	}
-
-}
-
-}
+//}
 public class Searcher <E> {
 	List<String> stopwords = Arrays.asList("a", "able", "about",
 			"across", "after", "all", "almost", "also", "am", "among", "an",
@@ -166,7 +166,7 @@ public class Searcher <E> {
 	
 	public static void start() throws IOException {
 		Searcher<?> srch = new Searcher();
-		spellCheck spellCheck = new spellCheck();
+//		spellCheck spellCheck = new spellCheck();
 		File wholeFolder = new File("ConvertedText");
 	    File[] List_Of_Files = wholeFolder.listFiles();
 	    Scanner s = new Scanner(System.in);
@@ -192,7 +192,7 @@ public class Searcher <E> {
 
 	    	else {
 				System.out.println("Results not Found for : " + str);
-				spellCheck.check(str);
+//				spellCheck.check(str);
 			}
 	    	try {
 				AutoSuggestion.startSuggestion(str);

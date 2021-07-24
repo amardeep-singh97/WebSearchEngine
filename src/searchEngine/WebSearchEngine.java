@@ -12,6 +12,6 @@ public class WebSearchEngine {
 //			Crawler cr = new Crawler();
 //			cr.start();
 		}
-		Searcher.start();
+		Indexer.start();
 	}
 }

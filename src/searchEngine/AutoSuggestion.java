@@ -29,7 +29,8 @@ public class AutoSuggestion {
 		  if (file.isFile()) 
 		  {
 			  String strFileText = readFileAsString(file.getName());
-			  StringTokenizer strTokenizer = new StringTokenizer(strFileText); 
+			  StringTokenizer strTokenizer = new StringTokenizer(strFileText);
+
 			  while (strTokenizer.hasMoreTokens()) 
 			  {  
 				  String strToken = strTokenizer.nextToken().replaceAll("[|;:.,='<>()%#@*^/&\"]", " ");
@@ -46,6 +47,7 @@ public class AutoSuggestion {
 	  {
 		  String strToken = listStrings.get(i);
 		  objTST.put(strToken, i);
+
 	  }
 	  
 	  System.out.print("You can also search for : ");
