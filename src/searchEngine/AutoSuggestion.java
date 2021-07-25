@@ -18,7 +18,7 @@ public class AutoSuggestion {
     return strData;
   }
 	
-  public static void startSuggestion(String word)throws Exception
+  public static ArrayList<String> startSuggestion(String word)throws Exception
   {
 	  File wholeFolder = new File("ConvertedText");
 	  File[] List_Of_Files = wholeFolder.listFiles();
@@ -49,9 +49,11 @@ public class AutoSuggestion {
 		  objTST.put(strToken, i);
 
 	  }
-	  
-	  System.out.print("You can also search for : ");
+
+	  ArrayList<String> list = new ArrayList<String>();
       for (String str : objTST.prefixMatch(word))
-    	  System.out.print(str + ", ");  	  	
+		  list.add(str);
+
+	  return list;
   	 }
 }
