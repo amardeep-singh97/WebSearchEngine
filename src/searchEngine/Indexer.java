@@ -3,6 +3,8 @@ package searchEngine;
 import textprocessing.TST;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,6 +18,9 @@ import java.util.List;
 public class Indexer {
     Map<Integer, String> sources;
     HashMap<String, HashSet<Integer>> index;
+    static JDialog searchBox ;
+    static Image icon = Toolkit.getDefaultToolkit().getImage("src\\browser.png");
+    
     public static String readFileAsString(String fileName)throws Exception
     {
         String strData = "";
@@ -91,70 +96,11 @@ public class Indexer {
         }
         return temp;
     }
-
-    public static void start (){
-        Indexer t = new Indexer();
-        searchEngine.SpellCheck spellCheck = new searchEngine.SpellCheck();
-        Scanner scanner = new Scanner(System.in);
-        int check =1;
-        int s;
-
-        while(check==1) {
-            System.out.println("Enter the word to search");
-            String word = scanner.nextLine().toLowerCase();
-            HashMap<String, Integer> hm = sortingHashMap(getFrequency(word));
-            List<Map.Entry<String, Integer> > list = new LinkedList<Map.Entry<String, Integer> >(hm.entrySet());
-
-            if (list.size() == 0) {
-                System.out.println();
-                System.out.println("Not found");
-                spellCheck.check(word);
-            }
-            if (list.size() > 0) {
-                for (int i = 0; i < 7; i++) {
-                    System.out.println(list.get(i));
-                }
-                try {
-                    AutoSuggestion.startSuggestion(word);
-                } catch (Exception e) {
-                    System.out.println("What?");
-                }
-            }
-
-            System.out.println("\nType 1 to search for another word or Type 0 to exit");
-
-            while(!scanner.hasNextInt())
-            {
-                System.out.println();
-                System.out.println("Try again!! Type 1 to search for another word or Type 0 to exit");
-                scanner.next();
-            }
-            check = scanner.nextInt();
-            if (check == 0) {
-                System.out.println();
-                System.out.println("Hope to see you soon. Good Bye!!");
-                break;
-            }
-            else if(check > 1){
-                System.out.println();
-                System.out.println("Please enter either 1 to search another word or 0 to exit");
-                check = scanner.nextInt();
-            }
-            else {
-                word = scanner.nextLine().toLowerCase();
-            }
-        }
-    }
-
+    
     public static void GUI() throws IOException {
-        final Searcher<?> srch = new Searcher();
-        File wholeFolder = new File("ConvertedText");
-        File[] List_Of_Files = wholeFolder.listFiles();
 
-        for (int i = 0; i < List_Of_Files.length; i++) {
-            srch.indexFile(List_Of_Files[i]);
-        }
-
+    	Indexer t = new Indexer();
+    	
         JFrame jframe = new JFrame("Search Engine");
         
         jframe.setResizable(false);
@@ -179,15 +125,14 @@ public class Indexer {
 
         final JScrollPane scrollPane = new JScrollPane(textarea);
 
-        Image icon = Toolkit.getDefaultToolkit().getImage("src\\browser.png");
 
         scrollPane.setBounds(50,155, 750, 250);
 
-        autoSuggestion.setBounds(50,135,500,15);
+        autoSuggestion.setBounds(50,135,500,20);
 
-        result.setBounds(50,115,500,15);
+        result.setBounds(50,115,500,20);
 
-        searching.setBounds(50,100,500,15);
+        searching.setBounds(50,100,500,20);
 
         subline.setBounds(50, 20, 250 , 20);
 
@@ -215,90 +160,139 @@ public class Indexer {
         jframe.setLayout(new BorderLayout());//using no layout managers
         jframe.setVisible(true);
 
-        button.addActionListener(new ActionListener() {
+        button.addActionListener(new ActionListener() {                                  //Search Button
 
             public void actionPerformed(ActionEvent e){
-                if(scrollPane.isVisible()) {
-                    //searching.setVisible(true);
-                    textarea.setText(null);
-                    scrollPane.resetKeyboardActions();
-                    autoSuggestion.setVisible(false);;
-                    scrollPane.setVisible(false);
-                }
-                if(searching.isVisible()) {
-                    searching.setVisible(false);
-                }
-                String wordToSearch = textfield.getText();
-                try {
-                    if(wordToSearch.length()==0) {
-                        result.setText("Please Enter a word");
-                        result.setVisible(true);
-                    }else {
-                        ArrayList<String> lis = AutoSuggestion.startSuggestion(wordToSearch);
-                        String[] al = wordToSearch.split(" ");
-                        HashMap<String, Integer> hm = sortingHashMap(getFrequency(wordToSearch));
-                        List<Map.Entry<String, Integer> > list = new LinkedList<Map.Entry<String, Integer> >(hm.entrySet());
-                        if(list.size() > 0)
-                        {
-                            result.setText("Total Results Found: "+list.size());
-                            result.setVisible(true);
-                            if(lis.isEmpty()) {
-                                autoSuggestion.setText("No suggestion Found");
-                                autoSuggestion.setVisible(true);
-                            }else {
-                                autoSuggestion.setText("You can also search for: "+ lis );
-                                autoSuggestion.setVisible(true);
+            	Thread searchingThread = new Thread() {
+            		public void run() {
+            			String word = textfield.getText();
+            			String[] al = word.split(" ");
+            			if(al.length>1) {
+            				searching.setText("You cannot search more than one word at once.");
+            				searching.setVisible(true);
+                            textarea.setText(null);
+                            result.setVisible(false);
+                            scrollPane.resetKeyboardActions();
+                            autoSuggestion.setVisible(false);;
+                            scrollPane.setVisible(false);
+            			}else {
+            				searchingBox();
+            				if(scrollPane.isVisible()) {
+                                //searching.setVisible(true);
+                                textarea.setText(null);
+                                scrollPane.resetKeyboardActions();
+                                autoSuggestion.setVisible(false);;
+                                scrollPane.setVisible(false);
                             }
-                            scrollPane.setVisible(true);
-                            for (int i = 0; i < list.size(); i++) {
-                                textarea.append((i+1)+". "+list.get(i) + System.lineSeparator());
+                            if(searching.isVisible()) {
+                                searching.setVisible(false);
                             }
-                            searching.setVisible(false);
-                        }
-                        else {
-                            String correction = "";
-                            boolean wordExist;
-                            ArrayList<String> spelllist = SpellCheck.correction(wordToSearch);
-                            for(int i=0; i<spelllist.size();i++) {
-                                if(i==spelllist.size()-1) {
-                                    correction += spelllist.get(i);
+                            try {
+                                if(word.length()==0) {
+                                    result.setText("Please Enter a word");
+                                    result.setVisible(true);
+                                    searchBox.dispose();
                                 }else {
-                                    correction += spelllist.get(i)+ " or ";
+                                    ArrayList<String> lis = AutoSuggestion.startSuggestion(word);         //Auto Suggestion
+                                    if(lis.contains(word)) {
+                                    	lis.remove(word);
+                                    }
+                                    HashMap<String, Integer> hm = sortingHashMap(getFrequency(word));               //Indexing
+                                    List<Map.Entry<String, Integer> > list = new LinkedList<Map.Entry<String, Integer> >(hm.entrySet());
+                                    if(list.size() > 0)
+                                    {
+                                        result.setText("Total Results Found: "+list.size());
+                                        result.setVisible(true);
+                                        if(lis.isEmpty()) {
+                                            autoSuggestion.setText("No suggestion Found");
+                                            autoSuggestion.setVisible(true);
+                                        }else {
+                                            autoSuggestion.setText("You can also search for: "+ lis );
+                                            autoSuggestion.setVisible(true);
+                                        }
+                                        scrollPane.setVisible(true);
+                                        for (int i = 0; i < list.size(); i++) {
+                                            textarea.append((i+1)+". "+list.get(i) + System.lineSeparator());
+                                        }
+                                        searching.setVisible(false);
+                                    }
+                                    else {
+                                        String correction = "";
+                                        boolean wordExist;
+                                        ArrayList<String> spelllist = SpellCheck.correction(word);            //Spell check
+                                        for(int i=0; i<spelllist.size();i++) {
+                                            if(i==spelllist.size()-1) {
+                                                correction += spelllist.get(i);
+                                            }else {
+                                                correction += spelllist.get(i)+ " or ";
+                                            }
+                                        }
+                                        wordExist = SpellCheck.check(word);
+                                        if(spelllist.isEmpty()&&wordExist==false) {
+                                        	searching.setText("Ummmmm, This doesn't seem like a word!");
+                                        	result.setVisible(false);
+                                            searching.setVisible(true);
+                                        }else if(spelllist.isEmpty()&&wordExist==true) {
+                                        	searching.setVisible(false);
+                                        }
+                                        else {
+                                            searching.setText("Did you mean: "+ correction +" ?");
+                                            searching.setVisible(true);
+                                        }
+                                        result.setText("Results not Found for : " + word);
+                                        result.setVisible(true);
+                                        if(lis.isEmpty()&&!spelllist.isEmpty()) {
+                                        	autoSuggestion.setVisible(false);
+                                        }
+                                        else if(lis.isEmpty()&&spelllist.isEmpty()) {
+                                            autoSuggestion.setText("No suggestion Found");
+                                            autoSuggestion.setVisible(true);
+                                        }else {
+                                            autoSuggestion.setText("You can also search for: "+ lis );
+                                            autoSuggestion.setVisible(true);
+                                        }
+                                    }
+                                    searchBox.dispose();
                                 }
+                            } catch (Exception e1) {
+                                e1.printStackTrace();
                             }
-                            wordExist = SpellCheck.check(wordToSearch);
-                            if(spelllist.isEmpty()&&wordExist==false) {
-                            	searching.setText("Ummmmm, This doesn't seem like a word!");
-                            	result.setVisible(false);
-                                searching.setVisible(true);
-                            }else if(spelllist.isEmpty()&&wordExist==true) {
-                            	searching.setVisible(false);
-                            }
-                            else {
-                                searching.setText("Did you mean: "+ correction +" ?");
-                                searching.setVisible(true);
-                            }
-                            result.setText("Results not Found for : " + wordToSearch);
-                            result.setVisible(true);
-                            if(lis.isEmpty()&&!spelllist.isEmpty()) {
-                            	autoSuggestion.setVisible(false);
-                            }
-                            else if(lis.isEmpty()&&spelllist.isEmpty()) {
-                                autoSuggestion.setText("No suggestion Found");
-                                autoSuggestion.setVisible(true);
-                            }else {
-                                autoSuggestion.setText("You can also search for: "+ lis );
-                                autoSuggestion.setVisible(true);
-                            }
-                        }
-
-                    }
-                } catch (Exception e1) {
-                    e1.printStackTrace();
-                }
+            			}
+            		}
+            	};
+            	searchingThread.start();
+            	
             }
         });
 
+    }
+    
+    private static void searchingMethod() {
+    	
+    }
+    
+    private static void searchingBox() {
+    	searchBox = new JDialog();
+    	
+    	JPanel contentPanel = new JPanel();
+    	searchBox.setIconImage(icon);
+		searchBox.setBounds(100, 100, 339, 136);
+		searchBox.getContentPane().setLayout(new BorderLayout());
+		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		searchBox.getContentPane().add(contentPanel, BorderLayout.CENTER);
+		contentPanel.setLayout(null);
+		
+		JLabel lblNewLabel = new JLabel("Searching...");
+		lblNewLabel.setFont(new Font("Calibri", Font.PLAIN, 17));
+		lblNewLabel.setBounds(10, 11, 173, 23);
+		contentPanel.add(lblNewLabel);
+		
+		JProgressBar progressBar = new JProgressBar();
+		progressBar.setIndeterminate(true);
+		progressBar.setBounds(75, 46, 181, 23);
+		contentPanel.add(progressBar);
+		
+		searchBox.setVisible(true);
     }
 
 }

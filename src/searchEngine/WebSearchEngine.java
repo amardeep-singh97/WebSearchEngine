@@ -24,6 +24,7 @@ import javax.swing.border.EmptyBorder;
 public class WebSearchEngine {
 	Image smallIcon = Toolkit.getDefaultToolkit().getImage("src\\browser.png");  
 	JFrame frame;
+	boolean internetConnection;
 	
 	public static void main(String[] args) throws IOException {
 		WebSearchEngine engine = new WebSearchEngine();
@@ -48,7 +49,7 @@ public class WebSearchEngine {
 		member1.setBounds(117, 40, 182, 14);
 		frame.getContentPane().add(member1);
 		
-		JLabel member2 = new JLabel(" Harjinder Singh");
+		JLabel member2 = new JLabel(" Harjinder Gill");
 		member2.setFont(new Font("Calibri", Font.PLAIN, 14));
 		member2.setBounds(165, 57, 103, 14);
 		frame.getContentPane().add(member2);
@@ -63,14 +64,14 @@ public class WebSearchEngine {
 		member4.setBounds(165, 94, 91, 14);
 		frame.getContentPane().add(member4);
 		
-		JLabel member5 = new JLabel("Tanya Aggarwal");
+		JLabel member5 = new JLabel("Tanya Agarwal");
 		member5.setFont(new Font("Calibri", Font.PLAIN, 14));
 		member5.setBounds(165, 111, 91, 14);
 		frame.getContentPane().add(member5);
 		
 		frame.setIconImage(smallIcon);
 		
-		JButton startBrowser = new JButton("Start Browser");
+		JButton startBrowser = new JButton("Start Browser");                   //Start Button for Browser
 		startBrowser.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				File textFolder = new File("ConvertedText//");
@@ -79,7 +80,7 @@ public class WebSearchEngine {
 					if(textFiles.length<2) {
 						dialogBoxRunBrowser();
 					}else {
-						Indexer.GUI();
+						Indexer.GUI();                                         // Calling indexer
 						frame.dispose();
 					}
 				} catch (IOException e1) {
@@ -96,7 +97,7 @@ public class WebSearchEngine {
 		checkLabel.setBounds(76, 136, 287, 23);
 		frame.getContentPane().add(checkLabel);
 		
-		JButton checkButton = new JButton("Check");
+		JButton checkButton = new JButton("Check");                    //Check Button for checking data data
 		checkButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				File htmlFolder = new File("downloadedPages//");
@@ -132,7 +133,7 @@ public class WebSearchEngine {
 		frame.setVisible(true);
 	}
 	
-	private final void limitedDataBox2() {
+	private final void limitedDataBox2() {                                              //Box
 		JPanel contentPanellimitedData2 = new JPanel();
 		JDialog limitedDataBox2 = new JDialog();
 		limitedDataBox2.setIconImage(smallIcon);
@@ -184,7 +185,21 @@ public class WebSearchEngine {
 		limitedDataBox2.setVisible(true);
 	}
 	
-	private final void limitedDataBox() {
+	private final void limitedDataBox() {                                               //Box
+		Thread checkInternetThread = new Thread() {
+			public void run() {
+				try {
+					checkConnection();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		};
+		checkInternetThread.start();
 		JPanel contentPanellimitedData = new JPanel();
 		JDialog limitedDataBox = new JDialog();
 		limitedDataBox.setIconImage(smallIcon);
@@ -202,18 +217,22 @@ public class WebSearchEngine {
 		JButton btnNewButton = new JButton("Crawl");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Thread crawlerThread1 = new Thread() {
-					public void run() {
-						Crawler cr = new Crawler();
-						try {
-							cr.start();
-						} catch (IOException e1) {
-							e1.printStackTrace();
-						}
+					if(internetConnection) {
+						noInternet();
+					}else {
+						Thread crawlerThread1 = new Thread() {                                   //Thread Crawler
+							public void run() {
+								Crawler cr = new Crawler();
+								try {
+									cr.start();
+								} catch (IOException e1) {
+									e1.printStackTrace();
+								}
+							}
+						};
+						crawlerThread1.start();
+						limitedDataBox.dispose();
 					}
-				};
-				crawlerThread1.start();
-				limitedDataBox.dispose();
 			}
 		});
 		btnNewButton.setFont(new Font("Calibri", Font.PLAIN, 13));
@@ -258,7 +277,7 @@ public class WebSearchEngine {
 		limitedDataBox.setVisible(true);
 	}
 	
-	private final void enoughDataPresentBox() {
+	private final void enoughDataPresentBox() {                                           //Box
 		JPanel contentPanelenoughData = new JPanel();
 		JDialog enoughDataPresentBox = new JDialog();
 		enoughDataPresentBox.setIconImage(smallIcon);
@@ -292,7 +311,7 @@ public class WebSearchEngine {
 		enoughDataPresentBox.setVisible(true);
 	}
 	
-	private final void dialogBoxRunBrowser() {
+	private final void dialogBoxRunBrowser() {                                         //Box
 		JPanel contentPanel = new JPanel();
 		JDialog box = new JDialog();
 		box.setIconImage(smallIcon);
@@ -336,6 +355,20 @@ public class WebSearchEngine {
 	}
 	
 	private final void dialogBoxCrawler() {
+		Thread checkInternetThread = new Thread() {                                       //check Internet Thread
+			public void run() {
+				try {
+					checkConnection();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		};
+		checkInternetThread.start();
 		JPanel contentPanelCrawler = new JPanel();
 		JDialog boxCrawler = new JDialog();
 		boxCrawler.setIconImage(smallIcon);
@@ -364,18 +397,22 @@ public class WebSearchEngine {
 			contentPanelCrawler.add(okButton);
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						Thread crawlerThread = new Thread() {
-							public void run() {
-								Crawler cr = new Crawler();
-								try {
-									cr.start();
-								} catch (IOException e1) {
-									e1.printStackTrace();
+						if(internetConnection) {
+							noInternet();
+						}else {
+							Thread crawlerThread = new Thread() {
+								public void run() {
+									Crawler cr = new Crawler();
+									try {
+										cr.start();
+									} catch (IOException e1) {
+										e1.printStackTrace();
+									}
 								}
-							}
-						};
-						crawlerThread.start();
-						boxCrawler.dispose();
+							};
+							crawlerThread.start();
+							boxCrawler.dispose();
+						}
 					}
 				});
 			okButton.setActionCommand("OK");
@@ -417,6 +454,23 @@ public class WebSearchEngine {
 		boxCrawler.setVisible(true);
 	}
 	
+	private final void noInternet() {
+		JDialog internetBox = new JDialog();
+		JPanel contentPanelInternet = new JPanel();
+		internetBox.setIconImage(smallIcon);
+		
+		internetBox.setBounds(100, 100, 339, 136);
+		internetBox.getContentPane().setLayout(new BorderLayout());
+		contentPanelInternet.setBorder(new EmptyBorder(5, 5, 5, 5));
+		internetBox.getContentPane().add(contentPanelInternet, BorderLayout.CENTER);
+		contentPanelInternet.setLayout(null);
+		
+		JLabel lblNewLabel = new JLabel("No Internet Connection");
+		lblNewLabel.setFont(new Font("Calibri", Font.PLAIN, 17));
+		lblNewLabel.setBounds(74, 37, 173, 23);
+		contentPanelInternet.add(lblNewLabel);
+		internetBox.setVisible(true);
+	}
 	
 	//for Resizing the image icon
 	private Image getScaledImage(Image Img, int width, int height){
@@ -428,6 +482,16 @@ public class WebSearchEngine {
 	    g2.dispose();
 
 	    return rimg;
+	}
+	
+	private void checkConnection() throws InterruptedException, IOException { 
+		Process process = java.lang.Runtime.getRuntime().exec("ping www.google.com");
+		int x  = process.waitFor();
+		if(x==0) {
+			internetConnection = false;
+		}else {
+			internetConnection = true;
+		}
 	}
 		
 }

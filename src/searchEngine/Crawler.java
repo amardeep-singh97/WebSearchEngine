@@ -23,6 +23,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 public class Crawler {
+	
 	private static final int DEPTH = 2;
 	private static final String URL = "https://en.wikipedia.org";
 	private Set<String> visitedURL = new HashSet<String>();
@@ -45,7 +46,7 @@ public class Crawler {
 		
 		Thread textConversionThread = new Thread() {
 			public void run() {
-				HTMLToText.start(files);
+				HTMLToText.start(files);                                  //Convert To Text
 			}
 		};
 		textConversionThread.start();
@@ -79,15 +80,15 @@ public class Crawler {
 		if(level <= DEPTH) {
 			Document doc = requestPage(url);
 			if(doc!=null) {
-				HTMLToText.writeHTMLDocument(doc);
+				HTMLToText.writeHTMLDocument(doc);                      // Save HTML
 				for(Element link:doc.select("a[href]")) {
 					String next_link = link.absUrl("href");
 					if(!visitedURL.contains(next_link) && filterURL(next_link)) {
 						File folder = new File("downloadedPages//");
 						File[] files = folder.listFiles();
 						progressBar.setValue(files.length);
-						if(files.length>120) {
-							break;
+						if(files.length>120) {                
+							break;                                     //break
 						}else {
 							crawl(level++, next_link);
 						}
@@ -157,7 +158,4 @@ public class Crawler {
 		dialog.setVisible(true);
 	}
 	
-	public void main(String[] args) {
-		crawlingDoneBox();
-	}
 }
